@@ -228,7 +228,6 @@ public class TodoControllerSpec {
     assertEquals(todosGotten.length, 0);
   }
 
-
   @Test
   public void gettingByNonexistentCategory() throws IOException {
     mockReq.setQueryString("category=Frogs");
@@ -241,6 +240,77 @@ public class TodoControllerSpec {
     String result = ctx.resultString();
     Todo[] todosGotten = JavalinJson.fromJson(result, Todo[].class);
     assertEquals(todosGotten.length, 0);
+  }
+
+  @Test
+  public void thatOwnerIsCaseInsensitive() throws IOException {
+
+    mockReq.setQueryString("owner=SUPERMAN");
+
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+
+    assertEquals(200, mockRes.getStatus());
+    String result = ctx.resultString();
+    Todo[] todosGotten = JavalinJson.fromJson(result, Todo[].class);
+    assertNotEquals(todosGotten.length, 0);
+    for (Todo todo : todosGotten) {
+      assertEquals("Superman", todo.owner);
+    }
+  }
+
+  @Test
+  public void thatStatusIsCaseInsensitive() throws IOException {
+    mockReq.setQueryString("status=COMPLETE");
+
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+
+    assertEquals(200, mockRes.getStatus());
+    String result = ctx.resultString();
+    Todo[] todosGotten = JavalinJson.fromJson(result, Todo[].class);
+    assertNotEquals(todosGotten.length, 0);
+    for (Todo todo : todosGotten) {
+      assertEquals(true, todo.status);
+    }
+  }
+
+  @Test
+  public void thatBodyIsCaseInsensitive() throws IOException {
+    // I'm unsure of whether literal spaces are allowed in setQueryString.
+    // For the moment, I've escaped them as %20, just as a precaution.
+    mockReq.setQueryString("body=UNTHAW%20BEFORE%20THANOS%20ARRIVES");
+
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+
+    assertEquals(200, mockRes.getStatus());
+    String result = ctx.resultString();
+    Todo[] todosGotten = JavalinJson.fromJson(result, Todo[].class);
+    assertNotEquals(todosGotten.length, 0);
+    for (Todo todo : todosGotten) {
+      assertEquals("Unthaw before thanos arrives", todo.body);
+    }
+  }
+
+  @Test
+  public void thatCategoryIsCaseInsensitive() throws IOException {
+    mockReq.setQueryString("category=TEST");
+
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+
+    assertEquals(200, mockRes.getStatus());
+    String result = ctx.resultString();
+    Todo[] todosGotten = JavalinJson.fromJson(result, Todo[].class);
+    assertNotEquals(todosGotten.length, 0);
+    for (Todo todo : todosGotten) {
+      assertEquals("Test", todo.category);
+    }
   }
 
 }
