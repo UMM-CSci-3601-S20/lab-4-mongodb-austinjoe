@@ -55,7 +55,7 @@ public class TodoController {
       boolean targetStatus = false;
       // We set the target status to false to just save a step, so the target status
       // only changes if the entry is marked complete
-      if (ctx.queryParam("status").equals("complete")) {
+      if (ctx.queryParam("status").equalsIgnoreCase("complete")) {
         targetStatus = true;
       }
       filters.add(eq("status", targetStatus));
