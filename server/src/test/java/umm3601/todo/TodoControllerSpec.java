@@ -160,4 +160,34 @@ public class TodoControllerSpec {
     }
   }
 
+  @Test
+  public void getTodosByBody() throws IOException {
+    // I'm unsure of whether literal spaces are allowed in setQueryString.
+    // For the moment, I've escaped them as %20, just as a precaution.
+    mockReq.setQueryString("body=Unthaw%20before%20thanos%20arrives");
+
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+
+    assertEquals(200, mockRes.getStatus());
+    String result = ctx.resultString();
+    for (Todo todo : JavalinJson.fromJson(result, Todo[].class)) {
+      assertEquals("Unthaw before thanos arrives", todo.body);
+    }
+  }
+
+  public void getTodosByCategory() throws IOException {
+    mockReq.setQueryString("category=Test");
+
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+
+    assertEquals(200, mockRes.getStatus());
+    String result = ctx.resultString();
+    for (Todo todo : JavalinJson.fromJson(result, Todo[].class)) {
+      assertEquals("Test", todo.category);
+    }
+  }
 }
