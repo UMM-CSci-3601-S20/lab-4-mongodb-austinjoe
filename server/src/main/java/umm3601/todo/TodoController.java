@@ -45,12 +45,24 @@ public class TodoController{
         List<Bson> filters = new ArrayList<Bson>(); // start with a blank document
 
         // TODO: add filters, sorting
-    
+        if(ctx.queryParamMap().containsKey("owner")){//If we filter using angular I don't believe we need this, I was just programming mindlessly...
+          filters.add(regex("owner", ctx.queryParam("owner"),"i"));
+        }
+        if(ctx.queryParamMap().containsKey("status")){
+          boolean targetStatus = false;
+          // We set the target status to false to just save a step, so the target status only changes if the
+          //entry is marked complete
+          if(ctx.queryParam("status").equals("complete")){
+            targetStatus = true;
+          }
+          filters.add(eq("status",targetStatus));
+        }
+
         ctx.json(todoCollection.find(filters.isEmpty() ? new Document() : and(filters))
           .into(new ArrayList<>()));
     }
 
-    
-    
+
+
 
 }

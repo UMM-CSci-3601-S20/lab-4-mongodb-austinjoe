@@ -40,7 +40,7 @@ import io.javalin.plugin.json.JavalinJson;
 
 /**
  * Test the logic for the Todo controller
- * @throws IOException 
+ * @throws IOException
  */
 
  public class TodoControllerSpec{
@@ -108,7 +108,7 @@ import io.javalin.plugin.json.JavalinJson;
             .append("status", true)
             .append("body", "This is the body for sam.")
             .append("category", "Test");
-            
+
 
         todoDocuments.insertMany(testTodos);
         todoDocuments.insertOne(Document.parse(sam.toJson()));
@@ -135,6 +135,36 @@ import io.javalin.plugin.json.JavalinJson;
         assertEquals(db.getCollection("todos").countDocuments(), JavalinJson.fromJson(result, Todo[].class).length,"Wrong number of todos");
     }
 
+    @Test
+    public void getTodosByOwner() throws IOException{
+
+      mockReq.setQueryString("owner=Superman");
+
+      Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+      todoController.getTodos(ctx);
+
+      assertEquals(200, mockRes.getStatus());
+      String result = ctx.resultString();
+      for(Todo todo: JavalinJson.fromJson(result, Todo[].class)){
+        assertEquals("Superman", todo.owner);
+      }
+    }
+
+    @Test
+    public void getTodosByStatus() throws IOException{
+      mockReq.setQueryString("status=complete");
+
+      Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+      todoController.getTodos(ctx);
+
+      assertEquals(200, mockRes.getStatus());
+      String result = ctx.resultString();
+      for(Todo todo : JavalinJson.fromJson(result, Todo[].class)){
+        assertEquals(true, todo.status);
+      }
+    }
 
 
  }
