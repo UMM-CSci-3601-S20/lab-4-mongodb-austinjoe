@@ -313,4 +313,58 @@ public class TodoControllerSpec {
     }
   }
 
+  @Test
+  public void gettingBySubstringOfOwner() throws IOException {
+
+    mockReq.setQueryString("owner=super");
+
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+
+    assertEquals(200, mockRes.getStatus());
+    String result = ctx.resultString();
+    Todo[] todosGotten = JavalinJson.fromJson(result, Todo[].class);
+    assertNotEquals(todosGotten.length, 0);
+    for (Todo todo : todosGotten) {
+      assertEquals("Superman", todo.owner);
+    }
+  }
+
+  @Test
+  public void gettingBySubstringOfBody() throws IOException {
+
+    mockReq.setQueryString("body=before");
+
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+
+    assertEquals(200, mockRes.getStatus());
+    String result = ctx.resultString();
+    Todo[] todosGotten = JavalinJson.fromJson(result, Todo[].class);
+    assertNotEquals(todosGotten.length, 0);
+    for (Todo todo : todosGotten) {
+      assertTrue(todo.body.contains("before"));
+    }
+  }
+
+  @Test
+  public void gettingBySubstringOfCategory() throws IOException {
+
+    mockReq.setQueryString("category=world");
+
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+
+    assertEquals(200, mockRes.getStatus());
+    String result = ctx.resultString();
+    Todo[] todosGotten = JavalinJson.fromJson(result, Todo[].class);
+    assertNotEquals(todosGotten.length, 0);
+    for (Todo todo : todosGotten) {
+      assertEquals("Saving the world", todo.category);
+    }
+  }
+
 }
