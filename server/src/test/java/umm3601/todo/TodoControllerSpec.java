@@ -40,131 +40,124 @@ import io.javalin.plugin.json.JavalinJson;
 
 /**
  * Test the logic for the Todo controller
+ *
  * @throws IOException
  */
+public class TodoControllerSpec {
+  MockHttpServletRequest mockReq = new MockHttpServletRequest();
+  MockHttpServletResponse mockRes = new MockHttpServletResponse();
 
- public class TodoControllerSpec{
-    MockHttpServletRequest mockReq = new MockHttpServletRequest();
-    MockHttpServletResponse mockRes = new MockHttpServletResponse();
+  private TodoController todoController;
 
-    private TodoController todoController;
+  private ObjectId samsID;
 
-    private ObjectId samsID;
+  static MongoClient mongoClient;
+  static MongoDatabase db;
 
-    static MongoClient mongoClient;
-    static MongoDatabase db;
+  static ObjectMapper jsonMapper = new ObjectMapper();
 
-    static ObjectMapper jsonMapper = new ObjectMapper();
+  @BeforeAll
+  public static void setupAll() {
+    String mongoAddr = System.getenv().getOrDefault("MONGO_ADDR", "localhost");
 
-    @BeforeAll
-    public static void setupAll() {
-        String mongoAddr = System.getenv().getOrDefault("MONGO_ADDR", "localhost");
+    mongoClient = MongoClients.create(MongoClientSettings.builder()
+        .applyToClusterSettings(builder -> builder.hosts(Arrays.asList(new ServerAddress(mongoAddr)))).build());
 
-        mongoClient = MongoClients.create(
-        MongoClientSettings.builder()
-            .applyToClusterSettings(builder ->
-            builder.hosts(Arrays.asList(new ServerAddress(mongoAddr))))
-            .build());
+    db = mongoClient.getDatabase("test");
+  }
 
-        db = mongoClient.getDatabase("test");
+  @BeforeEach
+  public void setupEach() throws IOException {
+
+    // Reset our mock request and response objects
+    mockReq.resetAll();
+    mockRes.resetAll();
+
+    // Setup database
+    MongoCollection<Document> todoDocuments = db.getCollection("todos");
+    todoDocuments.drop();
+    List<Document> testTodos = new ArrayList<>();
+    testTodos.add(Document.parse(
+      "{\n"
+      + "    owner: \"Steve Rogers\",\n"
+      + "    status: false,\n"
+      + "    body: \"Unthaw before thanos arrives\",\n"
+      + "    category: \"Saving the world\",\n"
+      + "}"));
+    testTodos.add(Document.parse(
+      "{\n"
+      + "    owner: \"Marty McFly\",\n"
+      + "    status: true,\n"
+      + "    body: \"Go Back to 1985 before the lightning strike\",\n"
+      + "    category: \"Back to the future\",\n"
+      + "}"));
+    testTodos.add(Document.parse(
+      "{\n"
+      + "    owner: \"Superman\",\n"
+      + "    status: false,\n"
+      + "    body: \"Stop Lex Luther\",\n"
+      + "    category: \"Saving the world\",\n" + "}"));
+
+    samsID = new ObjectId();
+    BasicDBObject sam = new BasicDBObject("_id", samsID);
+    sam = sam.append("owner", "Sam").append("status", true).append("body", "This is the body for sam.")
+        .append("category", "Test");
+
+    todoDocuments.insertMany(testTodos);
+    todoDocuments.insertOne(Document.parse(sam.toJson()));
+
+    todoController = new TodoController(db);
+  }
+
+  @AfterAll
+  public static void teardown() {
+    db.drop();
+    mongoClient.close();
+  }
+
+  @Test
+  public void GetAllTodos() throws IOException {
+
+    // Create our fake Javalin context
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+    todoController.getTodos(ctx);
+
+    assertEquals(200, mockRes.getStatus());
+
+    String result = ctx.resultString();
+    assertEquals(db.getCollection("todos").countDocuments(), JavalinJson.fromJson(result, Todo[].class).length,
+        "Wrong number of todos");
+  }
+
+  @Test
+  public void getTodosByOwner() throws IOException {
+
+    mockReq.setQueryString("owner=Superman");
+
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+
+    assertEquals(200, mockRes.getStatus());
+    String result = ctx.resultString();
+    for (Todo todo : JavalinJson.fromJson(result, Todo[].class)) {
+      assertEquals("Superman", todo.owner);
     }
+  }
 
-    @BeforeEach
-    public void setupEach() throws IOException{
+  @Test
+  public void getTodosByStatus() throws IOException {
+    mockReq.setQueryString("status=complete");
 
-        // Reset our mock request and response objects
-        mockReq.resetAll();
-        mockRes.resetAll();
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
 
-        //Setup database
-        MongoCollection<Document> todoDocuments = db.getCollection("todos");
-        todoDocuments.drop();
-        List<Document> testTodos = new ArrayList<>();
-        testTodos.add(Document.parse(
-            "{\n" +
-            "    owner: \"Steve Rogers\",\n" +
-            "    status: false,\n" +
-            "    body: \"Unthaw before thanos arrives\",\n" +
-            "    category: \"Saving the world\",\n" +
-            "}"));
-        testTodos.add(Document.parse(
-            "{\n" +
-            "    owner: \"Marty McFly\",\n" +
-            "    status: true,\n" +
-            "    body: \"Go Back to 1985 before the lightning strike\",\n" +
-            "    category: \"Back to the future\",\n" +
-            "}"));
-        testTodos.add(Document.parse(
-            "{\n" +
-            "    owner: \"Superman\",\n" +
-            "    status: false,\n" +
-            "    body: \"Stop Lex Luther\",\n" +
-            "    category: \"Saving the world\",\n" +
-            "}"));
+    todoController.getTodos(ctx);
 
-        samsID = new ObjectId();
-        BasicDBObject sam = new BasicDBObject("_id", samsID);
-        sam = sam.append("owner", "Sam")
-            .append("status", true)
-            .append("body", "This is the body for sam.")
-            .append("category", "Test");
-
-
-        todoDocuments.insertMany(testTodos);
-        todoDocuments.insertOne(Document.parse(sam.toJson()));
-
-        todoController = new TodoController(db);
+    assertEquals(200, mockRes.getStatus());
+    String result = ctx.resultString();
+    for (Todo todo : JavalinJson.fromJson(result, Todo[].class)) {
+      assertEquals(true, todo.status);
     }
+  }
 
-    @AfterAll
-    public static void teardown() {
-        db.drop();
-        mongoClient.close();
-    }
-
-    @Test
-    public void GetAllTodos() throws IOException {
-
-        //Create our fake Javalin context
-        Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
-        todoController.getTodos(ctx);
-
-        assertEquals(200, mockRes.getStatus());
-
-        String result = ctx.resultString();
-        assertEquals(db.getCollection("todos").countDocuments(), JavalinJson.fromJson(result, Todo[].class).length,"Wrong number of todos");
-    }
-
-    @Test
-    public void getTodosByOwner() throws IOException{
-
-      mockReq.setQueryString("owner=Superman");
-
-      Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
-
-      todoController.getTodos(ctx);
-
-      assertEquals(200, mockRes.getStatus());
-      String result = ctx.resultString();
-      for(Todo todo: JavalinJson.fromJson(result, Todo[].class)){
-        assertEquals("Superman", todo.owner);
-      }
-    }
-
-    @Test
-    public void getTodosByStatus() throws IOException{
-      mockReq.setQueryString("status=complete");
-
-      Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
-
-      todoController.getTodos(ctx);
-
-      assertEquals(200, mockRes.getStatus());
-      String result = ctx.resultString();
-      for(Todo todo : JavalinJson.fromJson(result, Todo[].class)){
-        assertEquals(true, todo.status);
-      }
-    }
-
-
- }
+}
