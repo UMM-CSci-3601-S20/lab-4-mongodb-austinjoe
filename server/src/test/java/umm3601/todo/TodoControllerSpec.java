@@ -140,7 +140,9 @@ public class TodoControllerSpec {
 
     assertEquals(200, mockRes.getStatus());
     String result = ctx.resultString();
-    for (Todo todo : JavalinJson.fromJson(result, Todo[].class)) {
+    Todo[] todosGotten = JavalinJson.fromJson(result, Todo[].class);
+    assertNotEquals(todosGotten.length, 0);
+    for (Todo todo : todosGotten) {
       assertEquals("Superman", todo.owner);
     }
   }
@@ -155,7 +157,9 @@ public class TodoControllerSpec {
 
     assertEquals(200, mockRes.getStatus());
     String result = ctx.resultString();
-    for (Todo todo : JavalinJson.fromJson(result, Todo[].class)) {
+    Todo[] todosGotten = JavalinJson.fromJson(result, Todo[].class);
+    assertNotEquals(todosGotten.length, 0);
+    for (Todo todo : todosGotten) {
       assertEquals(true, todo.status);
     }
   }
@@ -172,7 +176,9 @@ public class TodoControllerSpec {
 
     assertEquals(200, mockRes.getStatus());
     String result = ctx.resultString();
-    for (Todo todo : JavalinJson.fromJson(result, Todo[].class)) {
+    Todo[] todosGotten = JavalinJson.fromJson(result, Todo[].class);
+    assertNotEquals(todosGotten.length, 0);
+    for (Todo todo : todosGotten) {
       assertEquals("Unthaw before thanos arrives", todo.body);
     }
   }
@@ -186,7 +192,9 @@ public class TodoControllerSpec {
 
     assertEquals(200, mockRes.getStatus());
     String result = ctx.resultString();
-    for (Todo todo : JavalinJson.fromJson(result, Todo[].class)) {
+    Todo[] todosGotten = JavalinJson.fromJson(result, Todo[].class);
+    assertNotEquals(todosGotten.length, 0);
+    for (Todo todo : todosGotten) {
       assertEquals("Test", todo.category);
     }
   }
