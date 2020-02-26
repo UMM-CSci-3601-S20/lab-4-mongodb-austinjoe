@@ -183,6 +183,7 @@ public class TodoControllerSpec {
     }
   }
 
+  @Test
   public void getTodosByCategory() throws IOException {
     mockReq.setQueryString("category=Test");
 
