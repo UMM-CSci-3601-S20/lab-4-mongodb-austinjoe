@@ -27,8 +27,30 @@ import io.javalin.http.NotFoundResponse;
 
 
 public class TodoController{
-    public TodoController(MongoDatabase db){
 
-        
+    JacksonCodecRegistry jacksonCodecRegistry = JacksonCodecRegistry.withDefaultObjectMapper();
+
+    private final MongoCollection<Todo> todoCollection;
+
+    public TodoController(MongoDatabase database){
+        jacksonCodecRegistry.addCodecForClass(Todo.class);
+        todoCollection = database.getCollection("todos").withDocumentClass(Todo.class)
+        .withCodecRegistry(jacksonCodecRegistry);
     }
+
+    //Delete Todo?
+
+    public void getTodos(Context ctx) {
+
+        List<Bson> filters = new ArrayList<Bson>(); // start with a blank document
+
+        // TODO: add filters, sorting
+    
+        ctx.json(todoCollection.find(filters.isEmpty() ? new Document() : and(filters))
+          .into(new ArrayList<>()));
+    }
+
+    
+    
+
 }

@@ -115,4 +115,26 @@ import io.javalin.plugin.json.JavalinJson;
 
         todoController = new TodoController(db);
     }
+
+    @AfterAll
+    public static void teardown() {
+        db.drop();
+        mongoClient.close();
+    }
+
+    @Test
+    public void GetAllTodos() throws IOException {
+
+        //Create our fake Javalin context
+        Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+        todoController.getTodos(ctx);
+
+        assertEquals(200, mockRes.getStatus());
+
+        String result = ctx.resultString();
+        assertEquals(db.getCollection("todos").countDocuments(), JavalinJson.fromJson(result, Todo[].class).length,"Wrong number of todos");
+    }
+
+
+
  }
