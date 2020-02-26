@@ -367,4 +367,45 @@ public class TodoControllerSpec {
     }
   }
 
+  @Test
+  public void thatYouCantInjectARegexIntoTheOwnerFilterViaTheUrlParameters() throws IOException {
+    mockReq.setQueryString("owner=.*");
+
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+
+    assertEquals(200, mockRes.getStatus());
+    String result = ctx.resultString();
+    Todo[] todosGotten = JavalinJson.fromJson(result, Todo[].class);
+    assertEquals(todosGotten.length, 0);
+  }
+
+  @Test
+  public void thatYouCantInjectARegexIntoTheBodyFilterViaTheUrlParameters() throws IOException {
+    mockReq.setQueryString("body=.*");
+
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+
+    assertEquals(200, mockRes.getStatus());
+    String result = ctx.resultString();
+    Todo[] todosGotten = JavalinJson.fromJson(result, Todo[].class);
+    assertEquals(todosGotten.length, 0);
+  }
+
+  @Test
+  public void thatYouCantInjectARegexIntoTheCategoryFilterViaTheUrlParameters() throws IOException {
+    mockReq.setQueryString("category=.*");
+
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+
+    assertEquals(200, mockRes.getStatus());
+    String result = ctx.resultString();
+    Todo[] todosGotten = JavalinJson.fromJson(result, Todo[].class);
+    assertEquals(todosGotten.length, 0);
+  }
 }
