@@ -199,4 +199,48 @@ public class TodoControllerSpec {
       assertEquals("Test", todo.category);
     }
   }
+
+  @Test
+  public void gettingByNonexistentOwner() throws IOException {
+    mockReq.setQueryString("owner=Old%20Yeller");
+
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+
+    assertEquals(200, mockRes.getStatus());
+    String result = ctx.resultString();
+    Todo[] todosGotten = JavalinJson.fromJson(result, Todo[].class);
+    assertEquals(todosGotten.length, 0);
+  }
+
+  @Test
+  public void gettingByNonexistentBody() throws IOException {
+    mockReq.setQueryString("body=Supercalifragilisticexpialidocious");
+
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+
+    assertEquals(200, mockRes.getStatus());
+    String result = ctx.resultString();
+    Todo[] todosGotten = JavalinJson.fromJson(result, Todo[].class);
+    assertEquals(todosGotten.length, 0);
+  }
+
+
+  @Test
+  public void gettingByNonexistentCategory() throws IOException {
+    mockReq.setQueryString("category=Frogs");
+
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+
+    assertEquals(200, mockRes.getStatus());
+    String result = ctx.resultString();
+    Todo[] todosGotten = JavalinJson.fromJson(result, Todo[].class);
+    assertEquals(todosGotten.length, 0);
+  }
+
 }
