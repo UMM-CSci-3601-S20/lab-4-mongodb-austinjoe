@@ -50,6 +50,7 @@ public class TodoController {
     if (ctx.queryParamMap().containsKey("owner")) {
       filters.add(regex("owner", ctx.queryParam("owner"), "i"));
     }
+
     if (ctx.queryParamMap().containsKey("status")) {
       boolean targetStatus = false;
       // We set the target status to false to just save a step, so the target status
@@ -58,6 +59,14 @@ public class TodoController {
         targetStatus = true;
       }
       filters.add(eq("status", targetStatus));
+    }
+
+    if (ctx.queryParamMap().containsKey("body")) {
+      filters.add(regex("body", ctx.queryParam("body"), "i"));
+    }
+
+    if (ctx.queryParamMap().containsKey("category")) {
+      filters.add(regex("category", ctx.queryParam("category"), "i"));
     }
 
     ctx.json(todoCollection.find(filters.isEmpty() ? new Document() : and(filters))
