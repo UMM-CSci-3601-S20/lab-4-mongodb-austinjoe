@@ -57,4 +57,34 @@ describe('AddTodoComponent', () => {
   it('form should be invalid when empty', () => {
     expect(addTodoForm.valid).toBeFalsy();
   });
+
+  describe('The owner field', () => {
+    let ownerControl: AbstractControl;
+
+    beforeEach(() => {
+      ownerControl = addTodoComponent.addTodoForm.controls[`owner`];
+    });
+
+    it('should not allow empty names', () => {
+      ownerControl.setValue('');
+      expect(ownerControl.valid).toBeFalsy();
+    });
+
+    it('should be fine with "Chris Smith"', () => {
+      ownerControl.setValue('Chris Smith');
+      expect(ownerControl.valid).toBeTruthy();
+    });
+
+    it('should fail on single character names', () => {
+      ownerControl.setValue('x');
+      expect(ownerControl.valid).toBeFalsy();
+      expect(ownerControl.hasError('minlength')).toBeTruthy();
+    });
+
+    it('should fail on really long names', () => {
+      ownerControl.setValue('x'.repeat(100));
+      expect(ownerControl.valid).toBeFalsy();
+      expect(ownerControl.hasError('maxlength')).toBeTruthy();
+    });
+  });
 });
