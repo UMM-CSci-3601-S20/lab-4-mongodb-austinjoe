@@ -79,6 +79,6 @@ export class AddTodoComponent implements OnInit {
       this.router.navigate(['/users']);
     }, err => {
       this.snackBar.open('Failed to add the todo', null, { duration: 2000 });
-    })
+    });
   }
 }
