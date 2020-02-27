@@ -433,7 +433,7 @@ public class TodoControllerSpec {
     Document addedTodo = db.getCollection("todos").find(eq("_id", new ObjectId(id))).first();
     assertNotNull(addedTodo);
     assertEquals("Captain Kirk", addedTodo.getString("owner"));
-    assertEquals(true, addedTodo.getString("status"));
+    assertEquals(true, addedTodo.getBoolean("status"));
     assertEquals("Jump to warp six!", addedTodo.getString("body"));
     assertEquals("The final frontier", addedTodo.getString("category"));
   }
