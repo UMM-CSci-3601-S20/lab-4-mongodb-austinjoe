@@ -63,4 +63,9 @@ export class TodoService {
 
     return filteredTodos;
   }
+
+  addTodo(newTodo: Todo): Observable<string> {
+    // TODO: implement this method.
+    return null;
+  }
 }
