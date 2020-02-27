@@ -156,4 +156,33 @@ describe('AddTodoComponent', () => {
     });
 
   });
+
+  describe('The status field', () => {
+    let statusControl: AbstractControl;
+
+    beforeEach(() => {
+      statusControl = addTodoComponent.addTodoForm.controls[`status`];
+    });
+
+    it('should not allow empty statuses', () => {
+      statusControl.setValue('');
+      expect(statusControl.valid).toBeFalsy();
+    });
+
+    it('should be fine with "complete"', () => {
+      statusControl.setValue('complete');
+      expect(statusControl.valid).toBeTruthy();
+    });
+
+    it('should be fine with "incomplete"', () => {
+      statusControl.setValue('complete');
+      expect(statusControl.valid).toBeTruthy();
+    });
+
+
+    it('should fail on "I\'ll get around to it eventually"', () => {
+      statusControl.setValue("I'll get around to it eventually");
+      expect(statusControl.valid).toBeFalsy();
+    });
+  });
 });
