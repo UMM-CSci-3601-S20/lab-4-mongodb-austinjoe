@@ -11,6 +11,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { MockUserService } from 'src/testing/user.service.mock';
 import { AddUserComponent } from './add-user.component';
 import { UserService } from './user.service';
+import { MatIconModule } from '@angular/material/icon';
 
 describe('AddUserComponent', () => {
   let addUserComponent: AddUserComponent;
@@ -29,10 +30,11 @@ describe('AddUserComponent', () => {
         MatSelectModule,
         MatInputModule,
         BrowserAnimationsModule,
-        RouterTestingModule
+        RouterTestingModule,
+        MatIconModule,
       ],
       declarations: [AddUserComponent],
-      providers: [{ provide: UserService, useValue: new MockUserService() }]
+      providers: [{ provide: UserService, useValue: new MockUserService() }],
     }).compileComponents().catch(error => {
       expect(error).toBeNull();
     });
