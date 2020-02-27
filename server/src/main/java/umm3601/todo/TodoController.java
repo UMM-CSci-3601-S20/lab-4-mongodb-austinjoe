@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import com.google.common.collect.ImmutableMap;
 import com.mongodb.client.MongoCollection;
@@ -48,7 +49,7 @@ public class TodoController {
     // If we filter using angular I don't believe we need this, I was
     // just programming mindlessly...
     if (ctx.queryParamMap().containsKey("owner")) {
-      filters.add(regex("owner", ctx.queryParam("owner"), "i"));
+      filters.add(regex("owner", Pattern.quote(ctx.queryParam("owner")), "i"));
     }
 
     if (ctx.queryParamMap().containsKey("status")) {
@@ -62,11 +63,11 @@ public class TodoController {
     }
 
     if (ctx.queryParamMap().containsKey("body")) {
-      filters.add(regex("body", ctx.queryParam("body"), "i"));
+      filters.add(regex("body", Pattern.quote(ctx.queryParam("body")), "i"));
     }
 
     if (ctx.queryParamMap().containsKey("category")) {
-      filters.add(regex("category", ctx.queryParam("category"), "i"));
+      filters.add(regex("category", Pattern.quote(ctx.queryParam("category")), "i"));
     }
 
     ctx.json(todoCollection.find(filters.isEmpty() ? new Document() : and(filters))
