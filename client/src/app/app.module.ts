@@ -33,6 +33,7 @@ import { UserCardComponent } from './users/user-card.component';
 import { UserProfileComponent } from './users/user-profile.component';
 import { AddUserComponent } from './users/add-user.component';
 import { TodoCardComponent } from './todos/todo-card.component';
+import { TodoListComponent } from './todos/todo-list.component';
 import { TodoService } from './todos/todo.service';
 
 
@@ -64,6 +65,7 @@ const MATERIAL_MODULES: any[] = [
     UserProfileComponent,
     AddUserComponent,
     TodoCardComponent,
+    TodoListComponent,
   ],
   imports: [
     BrowserModule,
