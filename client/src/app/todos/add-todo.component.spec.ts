@@ -18,6 +18,7 @@ describe('AddTodoComponent', () => {
   let addTodoForm: FormGroup;
   let calledClose: boolean;
   let fixture: ComponentFixture<AddTodoComponent>;
+  const mockTodoService = new MockTodoService();
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -34,7 +35,7 @@ describe('AddTodoComponent', () => {
         MatIconModule,
       ],
       declarations: [AddTodoComponent],
-      providers: [{ provide: TodoService, useValue: new MockTodoService() }]
+      providers: [{ provide: TodoService, useValue: mockTodoService }]
     }).compileComponents().catch(error => {
       expect(error).toBeNull();
     });
@@ -183,6 +184,32 @@ describe('AddTodoComponent', () => {
     it('should fail on "I\'ll get around to it eventually"', () => {
       statusControl.setValue("I'll get around to it eventually");
       expect(statusControl.valid).toBeFalsy();
+    });
+  });
+
+  describe('submitting the form', () => {
+    let ownerControl: AbstractControl;
+    let statusControl: AbstractControl;
+    let categoryControl: AbstractControl;
+    let bodyControl: AbstractControl;
+
+    beforeEach(() => {
+      ownerControl = addTodoComponent.addTodoForm.controls[`owner`];
+      statusControl = addTodoComponent.addTodoForm.controls[`status`];
+      categoryControl = addTodoComponent.addTodoForm.controls[`category`];
+      bodyControl = addTodoComponent.addTodoForm.controls[`body`];
+      mockTodoService.todosThatHaveBeenAdded = [];
+    });
+
+    it('should give an object to TodoService whose status is true or false, not "complete" or "incomplete"', () => {
+      ownerControl.setValue('Yakko');
+      statusControl.setValue('complete');
+      categoryControl.setValue('educational television');
+      bodyControl.setValue('List all the countries of the world');
+
+      addTodoComponent.submitForm();
+
+      expect(typeof (mockTodoService.todosThatHaveBeenAdded[0].status)).toBe('boolean');
     });
   });
 });
