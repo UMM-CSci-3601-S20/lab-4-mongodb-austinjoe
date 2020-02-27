@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Todo, TodoStatusSelect } from './todo';
+import { map } from 'rxjs/operators';
+
 
 @Injectable()
 export class TodoService {
@@ -65,7 +67,7 @@ export class TodoService {
   }
 
   addTodo(newTodo: Todo): Observable<string> {
-    // TODO: implement this method.
-    return null;
+    return this.httpClient.post<{id:string}>(
+      this.todoUrl + '/new', newTodo).pipe(map(result => result.id));
   }
 }

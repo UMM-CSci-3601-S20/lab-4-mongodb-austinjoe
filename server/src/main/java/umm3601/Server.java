@@ -66,6 +66,9 @@ public class Server {
     //List todos
     server.get("api/todos", todoController::getTodos);
 
+    //Add new todo
+    server.post("api/todos/new", todoController::addNewTodo);
+
 
 
     server.exception(Exception.class, (e, ctx) -> {

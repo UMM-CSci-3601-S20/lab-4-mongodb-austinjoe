@@ -143,5 +143,17 @@ describe('Todo service: ', () => {
       const todoCategory = 'work';
       expect(todoService.filterTodos(testTodos, {category: todoCategory}).length).toBe(1);
   });
+    it('addUser() calls api/users/new', () => {
 
+    todoService.addTodo(testTodos[1]).subscribe(
+      id => expect(id).toBe('testid')
+    );
+
+    const req = httpTestingController.expectOne(todoService.todoUrl + '/new');
+
+    expect(req.request.method).toEqual('POST');
+    expect(req.request.body).toEqual(testTodos[1]);
+
+    req.flush({id: 'testid'});
+  });
 });
