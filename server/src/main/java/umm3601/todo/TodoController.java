@@ -73,4 +73,6 @@ public class TodoController {
     ctx.json(todoCollection.find(filters.isEmpty() ? new Document() : and(filters))
       .into(new ArrayList<>()));
   }
+
+  public void addNewTodo(Context ctx){}
 }

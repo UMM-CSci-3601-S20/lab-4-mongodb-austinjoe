@@ -408,4 +408,33 @@ public class TodoControllerSpec {
     Todo[] todosGotten = JavalinJson.fromJson(result, Todo[].class);
     assertEquals(todosGotten.length, 0);
   }
+
+  @Test
+  public void addTodo() throws IOException {
+    String testNewTodo = "{\"owner\": \"Captain Kirk\", \"status\": true, \"body\": \"Jump to warp six!\", \"category\": \"The final frontier\"}";
+
+    mockReq.setBodyContent(testNewTodo);
+    mockReq.setMethod("POST");
+
+    Context ctx = ContextUtil.init(mockReq,mockRes, "api/todo/new");
+
+    todoController.addNewTodo(ctx);
+
+    assertEquals(201, mockRes.getStatus());
+
+    String result = ctx.resultString();
+    String id = jsonMapper.readValue(result, ObjectNode.class).get("id").asText();
+    assertNotEquals("", id);
+    System.out.println(id);
+
+    assertEquals(1, db.getCollection("todos").countDocuments(eq("_id", new ObjectId(id))));
+
+    //verify todo was added to database
+    Document addedTodo = db.getCollection("todos").find(eq("_id", new ObjectId(id))).first();
+    assertNotNull(addedTodo);
+    assertEquals("Captain Kirk", addedTodo.getString("owner"));
+    assertEquals(true, addedTodo.getString("status"));
+    assertEquals("Jump to warp six!", addedTodo.getString("body"));
+    assertEquals("The final frontier", addedTodo.getString("category"));
+  }
 }
