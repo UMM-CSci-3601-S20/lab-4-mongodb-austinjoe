@@ -437,4 +437,61 @@ public class TodoControllerSpec {
     assertEquals("Jump to warp six!", addedTodo.getString("body"));
     assertEquals("The final frontier", addedTodo.getString("category"));
   }
+
+  @Test
+  public void thatAddingATodoWithEmptyOwnerFails() throws IOException {
+    String testNewTodo = "{\"owner\": \"\", \"status\": true, \"body\": \"Jump to warp six!\", \"category\": \"The final frontier\"}";
+
+    mockReq.setBodyContent(testNewTodo);
+    mockReq.setMethod("POST");
+
+    Context ctx = ContextUtil.init(mockReq,mockRes, "api/todo/new");
+
+    assertThrows(BadRequestResponse.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+  }
+
+  @Test
+  public void thatAddingATodoWithEmptyBodyFails() throws IOException {
+    String testNewTodo = "{\"owner\": \"\", \"status\": true, \"body\": \"\", \"category\": \"The final frontier\"}";
+
+    mockReq.setBodyContent(testNewTodo);
+    mockReq.setMethod("POST");
+
+    Context ctx = ContextUtil.init(mockReq,mockRes, "api/todo/new");
+
+    assertThrows(BadRequestResponse.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+  }
+
+  @Test
+  public void thatAddingATodoWithEmptyCategoryFails() throws IOException {
+    String testNewTodo = "{\"owner\": \"\", \"status\": true, \"body\": \"Jump to warp six!\", \"category\": \"\"}";
+
+    mockReq.setBodyContent(testNewTodo);
+    mockReq.setMethod("POST");
+
+    Context ctx = ContextUtil.init(mockReq,mockRes, "api/todo/new");
+
+    assertThrows(BadRequestResponse.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+  }
+
+  @Test
+  public void thatAddingATodoWithTheWrongStructureEntirelyFails() throws IOException {
+    String testNewTodo = "{\"The ants go marching\": \"one by one\", \"Hurrah\": \"Hurrah\"}";
+
+    mockReq.setBodyContent(testNewTodo);
+    mockReq.setMethod("POST");
+
+    Context ctx = ContextUtil.init(mockReq,mockRes, "api/todo/new");
+
+    assertThrows(BadRequestResponse.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+  }
+
 }
