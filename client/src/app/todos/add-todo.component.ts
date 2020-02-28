@@ -86,7 +86,7 @@ export class AddTodoComponent implements OnInit {
 
     this.todoService.addTodo(newTodo).subscribe(newID => {
       this.snackBar.open('Added todo', null, { duration: 2000 });
-      this.router.navigate(['/users']);
+      this.router.navigate(['/todos']);
     }, err => {
       this.snackBar.open('Failed to add the todo', null, { duration: 2000 });
     });
