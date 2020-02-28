@@ -1,11 +1,14 @@
 import {browser, by, element, Key, ElementFinder} from 'protractor';
+import { type } from 'os';
 
 export interface TestTodo {
   owner: string;
-  status: 'complete' | 'incomplete';
+  status: boolean;
   category: string;
   body: string;
+  TestTodoStatus: 'complete'|'incomplete';
 }
+
 
 export class AddTodoPage {
   navigateTo() {
@@ -19,6 +22,14 @@ export class AddTodoPage {
   getTitile() {
     const title = element(by.className('add-todo-title')).getText();
     return title;
+  }
+
+  getTodoCards() {
+    return element(by.className('todo-cards-container')).all(by.tagName('app-todo-card'));
+  }
+
+  getTodoListItems() {
+    return element(by.className('todo-nav-list')).all(by.className('todo-list-item'));
   }
 
   async typeInput(inputId: string, text: string) {
@@ -38,11 +49,11 @@ export class AddTodoPage {
     return element(by.buttonText('ADD TODO')).click();
   }
 
-  async addUser(newTodo: TestTodo) {
+  async addTodo(newTodo: TestTodo) {
     await this.typeInput('ownerField', newTodo.owner);
     await this.typeInput('categoryField', newTodo.category);
     await this.typeInput('bodyField', newTodo.body);
-    await this.selectMatSelectValue('statusField', newTodo.status);
+    await this.selectMatSelectValue('statusField', newTodo.TestTodoStatus);
     return this.clickAddTodo();
   }
 

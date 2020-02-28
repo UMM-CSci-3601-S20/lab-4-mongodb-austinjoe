@@ -79,6 +79,7 @@ describe('Todo list', () => {
     expect(page.getTodoCards().count()).toEqual(0); // There should be no cards
     expect(page.getTodoListItems().count()).toBeGreaterThan(0);
   });
+
   it('Should input an owner, category, body, and select a status, and check the correct todo is returned', () => {
     page.typeInput('todo-owner-input', 'Fry');
     page.typeInput('todo-body-input', 'Ipsum esse est ullamco mag');
