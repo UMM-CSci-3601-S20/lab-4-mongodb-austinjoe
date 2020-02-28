@@ -74,7 +74,17 @@ export class AddTodoComponent implements OnInit {
   }
 
   submitForm() {
-    this.todoService.addTodo(this.addTodoForm.value).subscribe(newID => {
+    const formResults = this.addTodoForm.value;
+    const newTodo: Todo = {
+      // The new todo doesn't have an id yet. (But)
+      _id: undefined,
+      owner: formResults.owner,
+      status: formResults.status === 'complete',
+      category: formResults.category,
+      body: formResults.body,
+    };
+
+    this.todoService.addTodo(newTodo).subscribe(newID => {
       this.snackBar.open('Added todo', null, { duration: 2000 });
       this.router.navigate(['/users']);
     }, err => {
