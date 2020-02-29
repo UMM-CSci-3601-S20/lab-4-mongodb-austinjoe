@@ -36,7 +36,7 @@
             <mat-label>Category</mat-label>
             <input matInput id="categoryField" placeholder="Category" formControlName="category" required>
             <mat-error *ngFor="let validation of addTodoValidationMessages.category">
-              <mat-error class="error-message" id="owner-error"
+              <mat-error class="error-message" id="category-error"
                         *ngIf="addTodoForm.get('category').hasError(validation.type) && (addTodoForm.get('category').dirty || addTodoForm.get('category').touched)">
                 {{validation.message}}
               </mat-error>
