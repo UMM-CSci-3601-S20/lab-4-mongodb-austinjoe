@@ -17,8 +17,8 @@ public class Server {
 
   static String appName = "UMM CSci 3601 Lab 4";
 
-  //public static final String USER_DATA_FILE = "/users.json";
- // public static final String TODO_DATA_FILE = "/todos.json";
+  // public static final String USER_DATA_FILE = "/users.json";
+  // public static final String TODO_DATA_FILE = "/todos.json";
 
   private static MongoDatabase database;
 
