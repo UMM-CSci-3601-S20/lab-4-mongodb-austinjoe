@@ -73,4 +73,19 @@ public class TodoController {
     ctx.json(todoCollection.find(filters.isEmpty() ? new Document() : and(filters))
       .into(new ArrayList<>()));
   }
+
+  public void addNewTodo(Context ctx){
+    Todo newTodo = ctx.bodyValidator(Todo.class)
+      // Owner, category, and body, should all be present and non-empty.
+      // (Status doesn't need any validation; its only possible values are
+      // true and false, both of which are always valid.)
+      .check((todo) -> todo.owner != null && todo.owner.length() > 0)
+      .check((todo) -> todo.category != null && todo.category.length() > 0)
+      .check((todo) -> todo.body != null && todo.body.length() > 0)
+      .get();
+
+    todoCollection.insertOne(newTodo);
+    ctx.status(201);
+    ctx.json(ImmutableMap.of("id",newTodo._id));
+  }
 }

@@ -33,6 +33,10 @@ export class MockTodoService extends TodoService {
     },
   ];
 
+  // When the user adds a todo, keep a reference of it in this
+  // array so that we can poke at it later.
+  public todosThatHaveBeenAdded: Todo[];
+
   constructor() {
     super(null);
   }
@@ -40,5 +44,10 @@ export class MockTodoService extends TodoService {
   getTodos(filters: { owner?: string, status?: TodoStatusSelect, body?: string, category?: string}): Observable<Todo[]> {
     // Just return the test todos regardless of what filters are passed in
     return of(MockTodoService.testTodos);
+  }
+
+  addTodo(newTodo: Todo): Observable<string> {
+    this.todosThatHaveBeenAdded.push(newTodo);
+    return of('Sure, that\'s totally stored in the database now!');
   }
 }
