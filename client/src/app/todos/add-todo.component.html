@@ -51,7 +51,7 @@
 
             </textarea>
             <mat-error *ngFor="let validation of addTodoValidationMessages.body">
-              <mat-error class="error-message" id="owner-error"
+              <mat-error class="error-message" id="body-error"
                         *ngIf="addTodoForm.get('body').hasError(validation.type) && (addTodoForm.get('body').dirty || addTodoForm.get('body').touched)">
                 {{validation.message}}
               </mat-error>
